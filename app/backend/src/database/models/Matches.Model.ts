@@ -13,7 +13,7 @@ class Matches extends Model<InferAttributes<Matches>, InferCreationAttributes<Ma
   declare homeTeamId: number;
   declare homeTeamGoals: number;
   declare awayTeamId: number;
-  declare awayTeamsGoals: number;
+  declare awayTeamGoals: number;
   declare inProgress: boolean;
 }
 
@@ -32,7 +32,7 @@ Matches.init({
   awayTeamId: {
     type: INTEGER,
   },
-  awayTeamsGoals: {
+  awayTeamGoals: {
     type: INTEGER,
   },
   inProgress: {
