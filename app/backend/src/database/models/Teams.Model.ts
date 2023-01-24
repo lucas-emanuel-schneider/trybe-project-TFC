@@ -23,7 +23,6 @@ Teams.init({
     type: DataTypes.STRING,
   },
 }, {
-  // ... Outras configs
   underscored: true,
   sequelize: db,
   modelName: 'teams',
@@ -32,8 +31,6 @@ Teams.init({
 
 Matches.belongsTo(Teams, { foreignKey: 'homeTeam', as: 'homeTeam' });
 Matches.belongsTo(Teams, { foreignKey: 'awayTeam', as: 'awayTeam' });
-
-// OtherModel.belongsTo(Example, { foreignKey: 'campoB', as: 'campoEstrangeiroB' });
 
 Teams.hasMany(Matches, { foreignKey: 'homeTeam', as: 'homeTeam' });
 Teams.hasMany(Matches, { foreignKey: 'awayTeam', as: 'awayTeam' });

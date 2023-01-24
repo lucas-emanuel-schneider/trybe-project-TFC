@@ -7,7 +7,6 @@ import {
   BOOLEAN,
 } from 'sequelize';
 import db from '.';
-// import OtherModel from './OtherModel';
 
 class Matches extends Model<InferAttributes<Matches>, InferCreationAttributes<Matches>> {
   declare id: CreationOptional<number>;
@@ -40,7 +39,6 @@ Matches.init({
     type: BOOLEAN,
   },
 }, {
-  // ... Outras configs
   underscored: true,
   sequelize: db,
   modelName: 'matches',
