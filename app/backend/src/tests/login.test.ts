@@ -76,7 +76,7 @@ describe('Test validate route', () => {
     it('validate route without token', async () => {
       const { body, status } = await chai.request(app).get('/login/validate');
 
-      expect(body.message).to.equal('Token must be a valid token');
+      expect(body.message).to.equal('Token not found');
       expect(status).to.equal(401);
     });
 
@@ -86,7 +86,7 @@ describe('Test validate route', () => {
         .get('/login/validate')
         .set({ authorization: invalidToken });
 
-      expect(body.message).to.equal('Expired or invalid token');
+      expect(body.message).to.equal('Token must be a valid token');
       expect(status).to.equal(401);
     });
 

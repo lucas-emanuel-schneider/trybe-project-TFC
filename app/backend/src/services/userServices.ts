@@ -17,7 +17,7 @@ export default class UserService {
   }
 
   public async getRole(token: string): Promise<string> {
-    const { dataValues: { role } } = await this.Jwt.verifyToken(token);
+    const { dataValues: { role } } = await this.Jwt.getToken(token);
     return role;
   }
 }

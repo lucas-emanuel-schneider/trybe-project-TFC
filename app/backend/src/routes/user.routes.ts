@@ -3,7 +3,6 @@ import UserService from '../services/userServices';
 import JwtFunctions from '../auth/jwtFunctions';
 import UserController from '../controllers/user.controller';
 import validateUser from '../middlewares/validateUser';
-import validateToken from '../middlewares/validateToken';
 
 const Jwt = new JwtFunctions();
 
@@ -15,6 +14,6 @@ const userRouter = express.Router();
 
 userRouter.post('/', validateUser, userController.login);
 
-userRouter.get('/validate', validateToken, userController.getRole);
+userRouter.get('/validate', Jwt.verifyToken, userController.getRole);
 
 export default userRouter;

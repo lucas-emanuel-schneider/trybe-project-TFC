@@ -12,4 +12,9 @@ export default class MatchesController {
     }
     res.status(200).json(matches);
   };
+
+  public createMatch = async (req: Request, res: Response): Promise<void> => {
+    const matchCreated = await this.matchService.createMatch(req.body);
+    res.status(201).json(matchCreated);
+  };
 }
