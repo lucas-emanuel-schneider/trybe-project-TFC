@@ -2,6 +2,7 @@ import ErrorClass from '../utils/ErrorClass';
 import matchesModel from '../database/models/Matches.Model';
 import teamsModel from '../database/models/Teams.Model';
 import { IMatchToCreate } from '../interfaces/IMatch';
+import IScore from '../interfaces/IScore';
 
 export default class MatchesService {
   public getAllMatches = async (): Promise<matchesModel[]> => {
@@ -16,7 +17,7 @@ export default class MatchesService {
 
   public createMatch = async (match: IMatchToCreate): Promise<matchesModel> => {
     const { homeTeamId, awayTeamId } = match;
-    this.validateTeamsToCreate(homeTeamId, awayTeamId);
+    await this.validateTeamsToCreate(homeTeamId, awayTeamId);
     const createdMatch = await matchesModel.create({
       ...match,
       inProgress: true,
@@ -33,5 +34,19 @@ export default class MatchesService {
     if (!validateHomeTeam || !validateAwayTeam) {
       throw new ErrorClass(404, 'There is no team with such id!');
     }
+  };
+
+  public finishMatch = async (id: number): Promise<void> => {
+    await matchesModel.update({ inProgress: false }, { where: { id } });
+  };
+
+  public updateScore = async (id: number, score: IScore): Promise<void> => {
+    await matchesModel.update(
+      {
+        homeTeamGoals: score.homeTeamGoals,
+        awayTeamGoals: score.awayTeamGoals,
+      },
+      { where: { id } },
+    );
   };
 }

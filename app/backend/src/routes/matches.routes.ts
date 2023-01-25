@@ -15,4 +15,8 @@ matchesRouter.get('/', matchesController.getMatches);
 
 matchesRouter.post('/', jwtValidation.verifyToken, matchesController.createMatch);
 
+matchesRouter.patch('/:id/finish', matchesController.finishMatch);
+
+matchesRouter.patch('/:id', matchesController.updateScore);
+
 export default matchesRouter;
