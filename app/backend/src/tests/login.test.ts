@@ -20,7 +20,6 @@ import UserModel from '../database/models/User.Model';
 
 import { Response } from 'superagent';
 
-chai.use(chaiHttp);
 
 const { app } = new App();
 
