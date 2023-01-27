@@ -25,4 +25,10 @@ export default class LeaderBoardController {
     const allScoresFiltred = this.sortScoreBoard(allScores);
     res.status(200).json(allScoresFiltred);
   };
+
+  public getAllTeamsScore = async (req: Request, res: Response): Promise<void> => {
+    const allScores = await this.leaderBoardService.getAllTeamsScore();
+    const allScoresFiltred = this.sortScoreBoard(allScores);
+    res.status(200).json(allScoresFiltred);
+  };
 }

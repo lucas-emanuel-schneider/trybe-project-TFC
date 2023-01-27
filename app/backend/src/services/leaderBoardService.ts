@@ -93,11 +93,21 @@ export default class LeaderBoardService {
     return teamsHomeInfo;
   };
 
-  // public getAllTeamsScore = async (): Promise<IBoard[]> => {
-  //   const homeScore = await this.getHomeTeamsScore();
-  //   const awayScore = await this.getAwayTeamsScore();
-  //   homeScore.forEach(() => {
-
-  //   });
-  // };
+  public getAllTeamsScore = async (): Promise<IBoard[]> => {
+    const home = await this.getHomeTeamsScore();
+    const away = await this.getAwayTeamsScore();
+    return home.map((team, i) => ({
+      name: away[i].name,
+      totalPoints: team.totalPoints + away[i].totalPoints,
+      totalGames: team.totalGames + away[i].totalGames,
+      totalVictories: team.totalVictories + away[i].totalVictories,
+      totalDraws: team.totalDraws + away[i].totalDraws,
+      totalLosses: team.totalLosses + away[i].totalLosses,
+      goalsFavor: team.goalsFavor + away[i].goalsFavor,
+      goalsOwn: team.goalsOwn + away[i].goalsOwn,
+      goalsBalance: team.goalsBalance + away[i].goalsBalance,
+      get efficiency() {
+        return +((this.totalPoints / (this.totalGames * 3)) * 100).toFixed(2);
+      } }));
+  };
 }

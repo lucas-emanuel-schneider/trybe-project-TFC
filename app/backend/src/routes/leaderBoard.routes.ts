@@ -8,6 +8,8 @@ const leaderBoardController = new LeaderBoardController(leaderBoardService);
 
 const leaderBoardRouter = express.Router();
 
+leaderBoardRouter.get('/', leaderBoardController.getAllTeamsScore);
+
 leaderBoardRouter.get('/home', leaderBoardController.getHomeScoreBoard);
 
 leaderBoardRouter.get('/away', leaderBoardController.getAwayScoreBoard);
