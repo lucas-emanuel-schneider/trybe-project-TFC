@@ -46,12 +46,8 @@ export default class LeaderBoardService {
 
   private getGoals = (cur: IMatch, isHome: boolean | undefined, acc: IBoard) => {
     let result = { ...acc };
-    if (isHome) {
-      result = this.getHomeGoals(cur, acc);
-    }
-    if (!isHome) {
-      result = this.getAwayGoals(cur, acc);
-    }
+    if (isHome) result = this.getHomeGoals(cur, acc);
+    if (!isHome) result = this.getAwayGoals(cur, acc);
     return result;
   };
 
