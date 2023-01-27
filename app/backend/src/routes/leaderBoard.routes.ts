@@ -10,4 +10,6 @@ const leaderBoardRouter = express.Router();
 
 leaderBoardRouter.get('/home', leaderBoardController.getHomeScoreBoard);
 
+leaderBoardRouter.get('/away', leaderBoardController.getAwayScoreBoard);
+
 export default leaderBoardRouter;

@@ -3,6 +3,7 @@ import ITeam from '../interfaces/ITeam';
 import matchesModel from '../database/models/Matches.Model';
 import teamsModel from '../database/models/Teams.Model';
 import { IBoard } from '../interfaces/IScore';
+import IMatch from '../interfaces/IMatch';
 
 export default class LeaderBoardService {
   private _info: IBoard = {
@@ -29,13 +30,39 @@ export default class LeaderBoardService {
     return allMatches;
   };
 
-  private setScoreObjHomeTeams = (matches: matchesModel[], team: ITeam) => {
-    const result = matches.reduce((acc, curr) => {
-      if (curr.awayTeamGoals > curr.homeTeamGoals) acc.totalLosses += 1;
-      if (curr.awayTeamGoals === curr.homeTeamGoals) acc.totalDraws += 1;
-      if (curr.awayTeamGoals < curr.homeTeamGoals) acc.totalVictories += 1;
-      acc.goalsOwn += curr.awayTeamGoals;
-      acc.goalsFavor += curr.homeTeamGoals;
+  private getHomeGoals = (cur: IMatch, acc: IBoard) => {
+    if (cur.awayTeamGoals > cur.homeTeamGoals) acc.totalLosses += 1;
+    if (cur.awayTeamGoals === cur.homeTeamGoals) acc.totalDraws += 1;
+    if (cur.awayTeamGoals < cur.homeTeamGoals) acc.totalVictories += 1;
+    return acc;
+  };
+
+  private getAwayGoals = (cur: IMatch, acc: IBoard) => {
+    if (cur.awayTeamGoals < cur.homeTeamGoals) acc.totalLosses += 1;
+    if (cur.awayTeamGoals === cur.homeTeamGoals) acc.totalDraws += 1;
+    if (cur.awayTeamGoals > cur.homeTeamGoals) acc.totalVictories += 1;
+    return acc;
+  };
+
+  private getGoals = (cur: IMatch, isHome: boolean | undefined, acc: IBoard) => {
+    let result = { ...acc };
+    if (isHome) {
+      result = this.getHomeGoals(cur, acc);
+    }
+    if (!isHome) {
+      result = this.getAwayGoals(cur, acc);
+    }
+    return result;
+  };
+
+  private setScoreObj = (matches: matchesModel[], team: ITeam, isHome: boolean) => {
+    const result = matches.reduce((acc, cur) => {
+      const { totalDraws, totalLosses, totalVictories } = this.getGoals(cur, isHome, acc);
+      acc.totalDraws = totalDraws;
+      acc.totalLosses = totalLosses;
+      acc.totalVictories = totalVictories;
+      acc.goalsOwn += isHome ? cur.awayTeamGoals : cur.homeTeamGoals;
+      acc.goalsFavor += isHome ? cur.homeTeamGoals : cur.awayTeamGoals;
       acc.goalsBalance = acc.goalsFavor - acc.goalsOwn;
       acc.totalGames = matches.length;
       acc.totalPoints = (acc.totalVictories * 3) + acc.totalDraws;
@@ -46,13 +73,14 @@ export default class LeaderBoardService {
     return result;
   };
 
-  private sortScoreBoard = async (teamsHomeInfo: IBoard[]): Promise<IBoard[]> => {
-    const sortedResult = teamsHomeInfo.sort((a, b) => b.totalPoints - a.totalPoints
-      || b.totalVictories - a.totalVictories
-      || b.goalsBalance - a.goalsBalance
-      || b.goalsFavor - a.goalsFavor
-      || b.goalsOwn - a.goalsOwn);
-    return sortedResult;
+  public getAwayTeamsScore = async (): Promise<IBoard[]> => {
+    const matches = await this.getAllMatchesFinished();
+    const allTeams = await teamsModel.findAll();
+    const teamsAwayInfo = allTeams.map((t) => {
+      const matchesFiltred = matches.filter((team) => team.awayTeamId === t.id);
+      return this.setScoreObj(matchesFiltred, t, false);
+    });
+    return teamsAwayInfo;
   };
 
   public getHomeTeamsScore = async (): Promise<IBoard[]> => {
@@ -60,9 +88,16 @@ export default class LeaderBoardService {
     const allTeams = await teamsModel.findAll();
     const teamsHomeInfo = allTeams.map((t) => {
       const matchesFiltred = matches.filter((team) => team.homeTeamId === t.id);
-      return this.setScoreObjHomeTeams(matchesFiltred, t);
+      return this.setScoreObj(matchesFiltred, t, true);
     });
-    const sortedScoreBoard = this.sortScoreBoard(teamsHomeInfo);
-    return sortedScoreBoard;
+    return teamsHomeInfo;
   };
+
+  // public getAllTeamsScore = async (): Promise<IBoard[]> => {
+  //   const homeScore = await this.getHomeTeamsScore();
+  //   const awayScore = await this.getAwayTeamsScore();
+  //   homeScore.forEach(() => {
+
+  //   });
+  // };
 }
